@@ -5,5 +5,81 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".UI.AddTerm">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/textViewTermName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Term Name:"
+                tools:layout_editor_absoluteX="37dp"
+                tools:layout_editor_absoluteY="82dp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Hi"
+                tools:layout_editor_absoluteX="130dp"
+                tools:layout_editor_absoluteY="68dp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Start Date:"
+                tools:layout_editor_absoluteX="31dp"
+                tools:layout_editor_absoluteY="71dp" />
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="End Date:"
+                tools:layout_editor_absoluteX="42dp"
+                tools:layout_editor_absoluteY="157dp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Save"></Button>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+
+
+
+    
+
+
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
