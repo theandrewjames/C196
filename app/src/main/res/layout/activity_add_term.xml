@@ -23,6 +23,7 @@
                 tools:layout_editor_absoluteY="82dp" />
 
             <EditText
+                android:id="@+id/editTermName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="Hi"
@@ -42,6 +43,12 @@
                 tools:layout_editor_absoluteX="31dp"
                 tools:layout_editor_absoluteY="71dp" />
 
+            <EditText
+                android:id="@+id/editStartDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="MM/DD/YYYY"
+                android:inputType="date" />
 
         </LinearLayout>
         <LinearLayout
@@ -56,6 +63,12 @@
                 tools:layout_editor_absoluteX="42dp"
                 tools:layout_editor_absoluteY="157dp" />
 
+            <EditText
+                android:id="@+id/editEndDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="MM/DD/YYYY"
+                android:inputType="date" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -63,9 +76,11 @@
             android:orientation="horizontal">
 
             <Button
-                android:layout_width="100dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Save"></Button>
+                android:text="Save"
+                android:clickable="true"
+                android:onClick="saveButton"/>
         </LinearLayout>
 
     </LinearLayout>
