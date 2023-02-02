@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
@@ -38,6 +39,7 @@ public class AddTerm extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.term_detail, menu);
         return true;
     }
+
     public void saveButton(View view) {
         Terms terms;
         if(termId == -1) {
