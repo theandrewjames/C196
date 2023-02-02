@@ -28,6 +28,7 @@ import java.util.Locale;
 public class AddCourse extends AppCompatActivity {
     EditText editName;
     EditText editStart;
+    EditText editEnd;
     DatePickerDialog.OnDateSetListener startDate;
     final Calendar myCalendarStart = Calendar.getInstance();
     EditText instructorName;
@@ -46,8 +47,11 @@ public class AddCourse extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         editName=findViewById(R.id.courseNameEditText);
         editStart=findViewById(R.id.editCourseStart);
+        editEnd=findViewById(R.id.editCourseEnd);
         String myFormat = "MM/dd/yy";
         sdf = new SimpleDateFormat(myFormat, Locale.US);
+        editStart.setText(getIntent().getStringExtra("start"));
+        editEnd.setText(getIntent().getStringExtra("end"));
         editStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,7 +81,6 @@ public class AddCourse extends AppCompatActivity {
         email=findViewById(R.id.email);
         statusRadio=findViewById(R.id.statusRadioGroup);
         note=findViewById(R.id.noteEdit);
-
         editName.setText(getIntent().getStringExtra("name"));
         status=getIntent().getStringExtra("status");
         if(status == null) statusRadio.check(R.id.statusPlan);

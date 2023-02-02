@@ -50,7 +50,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="End Date"/>
+                android:text="End Date" />
+            <EditText
+                android:id="@+id/editCourseEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="02/16/23"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
