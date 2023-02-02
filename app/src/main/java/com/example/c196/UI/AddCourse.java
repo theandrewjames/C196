@@ -30,6 +30,7 @@ public class AddCourse extends AppCompatActivity {
     EditText editStart;
     EditText editEnd;
     DatePickerDialog.OnDateSetListener startDate;
+    DatePickerDialog.OnDateSetListener endDate;
     final Calendar myCalendarStart = Calendar.getInstance();
     EditText instructorName;
     EditText phone;
@@ -67,6 +68,21 @@ public class AddCourse extends AppCompatActivity {
                         myCalendarStart.get(Calendar.MONTH), myCalendarStart.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+        editEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Date date;
+                String info = editEnd.getText().toString();
+                if(info.equals(""))info= "02/10/23";
+                try {
+                    myCalendarStart.setTime(sdf.parse(info));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                new DatePickerDialog(AddCourse.this, endDate, myCalendarStart.get(Calendar.YEAR),
+                        myCalendarStart.get(Calendar.MONTH), myCalendarStart.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
         startDate=new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
@@ -74,6 +90,15 @@ public class AddCourse extends AppCompatActivity {
                 myCalendarStart.set(Calendar.MONTH, monthOfYear);
                 myCalendarStart.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 updateLabelStart();
+            }
+        };
+        endDate=new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
+                myCalendarStart.set(Calendar.YEAR, year);
+                myCalendarStart.set(Calendar.MONTH, monthOfYear);
+                myCalendarStart.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabelEnd();
             }
         };
         instructorName=findViewById(R.id.instructorEditText);
@@ -94,9 +119,8 @@ public class AddCourse extends AppCompatActivity {
         note.setText(getIntent().getStringExtra("note"));
         repository=new Repository(getApplication());
     }
-    public void updateLabelStart() {
-        editStart.setText(sdf.format(myCalendarStart.getTime()));
-    }
+    public void updateLabelStart() { editStart.setText(sdf.format(myCalendarStart.getTime()));}
+    public void updateLabelEnd() { editEnd.setText(sdf.format(myCalendarStart.getTime()));}
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.course_detail, menu);
         return true;
@@ -125,9 +149,22 @@ public class AddCourse extends AppCompatActivity {
                 }
                 Long trigger=myDate.getTime();
                 Intent intent = new Intent(AddCourse.this, MyReceiver.class);
-                intent.putExtra("key", "message to send");
+                intent.putExtra("key", "Start of course: " + getIntent().getStringExtra("name"));
                 PendingIntent sender = PendingIntent.getBroadcast(AddCourse.this, MainActivity.numAlert++,  intent, 0);
                 AlarmManager alarmManager=(AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
+                dateFromScreen = editEnd.getText().toString();
+                myDate = null;
+                try {
+                    myDate = sdf.parse(dateFromScreen);
+                }catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                trigger=myDate.getTime();
+                intent = new Intent(AddCourse.this, MyReceiver.class);
+                intent.putExtra("key", "End of course: " + getIntent().getStringExtra("name"));
+                sender = PendingIntent.getBroadcast(AddCourse.this, MainActivity.numAlert++,  intent, 0);
+                alarmManager=(AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
                 return true;
         }
