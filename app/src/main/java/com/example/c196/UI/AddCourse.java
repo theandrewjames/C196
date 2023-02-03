@@ -11,18 +11,25 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 
 import com.example.c196.Database.Repository;
+import com.example.c196.Entity.Courses;
+import com.example.c196.Entity.Terms;
 import com.example.c196.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class AddCourse extends AppCompatActivity {
@@ -41,11 +48,38 @@ public class AddCourse extends AppCompatActivity {
     Repository repository;
     String myFormat;
     SimpleDateFormat sdf;
+    Spinner termSpinner;
+    int courseID;
+    int termId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_course);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        repository=new Repository(getApplication());
+        courseID=getIntent().getIntExtra("id", -1);
+        termSpinner = (Spinner) findViewById(R.id.termSpinner);
+        List<Terms> terms = repository.getAllTerms();
+        List<Integer> termIDs = new ArrayList<>();
+        for(Terms term : terms) {
+            termIDs.add(term.getTermId());
+        }
+        termId = getIntent().getIntExtra("termID", -1);
+        termSpinner.setSelection(termId);
+        ArrayAdapter<Integer> termArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, termIDs);
+        termArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        termSpinner.setAdapter(termArrayAdapter);
+        termSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                termId = Integer.parseInt(termSpinner.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         editName=findViewById(R.id.courseNameEditText);
         editStart=findViewById(R.id.editCourseStart);
         editEnd=findViewById(R.id.editCourseEnd);
@@ -117,7 +151,6 @@ public class AddCourse extends AppCompatActivity {
         phone.setText(getIntent().getStringExtra("phone"));
         email.setText(getIntent().getStringExtra("email"));
         note.setText(getIntent().getStringExtra("note"));
-        repository=new Repository(getApplication());
     }
     public void updateLabelStart() { editStart.setText(sdf.format(myCalendarStart.getTime()));}
     public void updateLabelEnd() { editEnd.setText(sdf.format(myCalendarStart.getTime()));}
@@ -171,6 +204,24 @@ public class AddCourse extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     public void saveButton(View view) {
+        Courses courses;
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.statusRadioGroup);
+        int selectedId = radioGroup.getCheckedRadioButtonId();
+        RadioButton button = (RadioButton) findViewById(selectedId);
+        if(courseID == -1) {
+            int newId = repository.getAllCourses().get(repository.getAllCourses().size() - 1).getCourseId() + 1;
+            courses = new Courses(newId, editName.getText().toString(), button.getText().toString(),
+                    editStart.getText().toString(), editEnd.getText().toString(), termId, instructorName.getText().toString(),
+                    email.getText().toString(), phone.getText().toString(),note.getText().toString());
+            repository.insert(courses);
+        }
+        else {
+            courses = new Courses(courseID, editName.getText().toString(), button.getText().toString(),
+                    editStart.getText().toString(), editEnd.getText().toString(), termId, instructorName.getText().toString(),
+                    email.getText().toString(), phone.getText().toString(),note.getText().toString());
+            repository.update(courses);
+        }
     }
 }

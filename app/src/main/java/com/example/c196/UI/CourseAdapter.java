@@ -2,6 +2,7 @@ package com.example.c196.UI;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
                     int position=getAdapterPosition();
                     final Courses current = mCourses.get(position);
                     Intent intent = new Intent(context, AddCourse.class);
+                    intent.putExtra("termID", current.getTermId());
                     intent.putExtra("id", current.getCourseId());
                     intent.putExtra("name", current.getCourseName());
                     intent.putExtra("start", current.getStartDate());
