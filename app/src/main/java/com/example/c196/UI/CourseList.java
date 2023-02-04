@@ -18,16 +18,19 @@ import com.example.c196.R;
 import java.util.List;
 
 public class CourseList extends AppCompatActivity {
-
+    List courses;
+    Repository repo;
+    CourseAdapter adapter;
+    RecyclerView recyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_list);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        RecyclerView recyclerView=findViewById(R.id.recyclerview2);
-        Repository repo=new Repository(getApplication());
-        List<Courses> courses=repo.getAllCourses();
-        final CourseAdapter adapter = new CourseAdapter(this);
+        recyclerView=findViewById(R.id.recyclerview2);
+        repo=new Repository(getApplication());
+        courses=repo.getAllCourses();
+        adapter = new CourseAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter.setCourses(courses);
@@ -38,13 +41,18 @@ public class CourseList extends AppCompatActivity {
         startActivity(intent);
     }
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_termlist, menu);
+        getMenuInflater().inflate(R.menu.menu_courselist, menu);
         return true;
     }
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case android.R.id.home:
                 this.finish();
+                return true;
+            case R.id.refreshCourseList:
+                courses=repo.getAllCourses();
+                recyclerView.setAdapter(adapter);
+                adapter.setCourses(courses);
                 return true;
         }
         return super.onOptionsItemSelected(item);

@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.c196.Database.Repository;
 import com.example.c196.Entity.Courses;
@@ -143,7 +144,7 @@ public class AddCourse extends AppCompatActivity {
         editName.setText(getIntent().getStringExtra("name"));
         status=getIntent().getStringExtra("status");
         if(status == null) statusRadio.check(R.id.statusPlan);
-        else if(status.equals("in progress")) statusRadio.check(R.id.statusProgress);
+        else if(status.equals("In Progress")) statusRadio.check(R.id.statusProgress);
         else if(status.equals("Completed")) statusRadio.check(R.id.statusComplete);
         else if(status.equals("Dropped")) statusRadio.check(R.id.statusDropped);
         else statusRadio.check(R.id.statusPlan);
@@ -199,7 +200,23 @@ public class AddCourse extends AppCompatActivity {
                 sender = PendingIntent.getBroadcast(AddCourse.this, MainActivity.numAlert++,  intent, 0);
                 alarmManager=(AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
+                Toast.makeText(AddCourse.this, "Start & end date notifications set", Toast.LENGTH_SHORT).show();
                 return true;
+            case R.id.deleteCourse:
+                if(courseID == -1) {
+                    Toast.makeText(AddCourse.this, "Cannot delete a non-saved course", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    List<Courses> courses = repository.getAllCourses();
+                    List<Courses> courseToDelete = new ArrayList<>();
+                    for (Courses courses1 : courses) {
+                        if (courses1.getCourseId() == courseID)
+                            courseToDelete.add(courses1);
+                        repository.delete(courseToDelete.get(0));
+                        Toast.makeText(AddCourse.this, "Course deleted", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -215,12 +232,14 @@ public class AddCourse extends AppCompatActivity {
             courses = new Courses(newId, editName.getText().toString(), button.getText().toString(),
                     editStart.getText().toString(), editEnd.getText().toString(), termId, instructorName.getText().toString(),
                     email.getText().toString(), phone.getText().toString(),note.getText().toString());
+            Toast.makeText(AddCourse.this, "Course saved", Toast.LENGTH_SHORT).show();
             repository.insert(courses);
         }
         else {
             courses = new Courses(courseID, editName.getText().toString(), button.getText().toString(),
                     editStart.getText().toString(), editEnd.getText().toString(), termId, instructorName.getText().toString(),
                     email.getText().toString(), phone.getText().toString(),note.getText().toString());
+            Toast.makeText(AddCourse.this, "Course updated", Toast.LENGTH_SHORT).show();
             repository.update(courses);
         }
     }

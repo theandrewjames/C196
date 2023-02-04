@@ -17,16 +17,19 @@ import com.example.c196.R;
 import java.util.List;
 
 public class TermList extends AppCompatActivity {
-
+    List terms;
+    Repository repo;
+     TermAdapter adapter;
+    RecyclerView recyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_term_list);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        RecyclerView recyclerView=findViewById(R.id.recyclerview);
-        Repository repo=new Repository(getApplication());
-        List<Terms> terms=repo.getAllTerms();
-        final TermAdapter adapter = new TermAdapter(this);
+        recyclerView=findViewById(R.id.recyclerview);
+        repo=new Repository(getApplication());
+        terms=repo.getAllTerms();
+        adapter = new TermAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter.setTerms(terms);
@@ -44,6 +47,11 @@ public class TermList extends AppCompatActivity {
         switch(item.getItemId()) {
             case android.R.id.home:
                 this.finish();
+                return true;
+            case R.id.refreshTerm:
+                terms = repo.getAllTerms();
+                recyclerView.setAdapter(adapter);
+                adapter.setTerms(terms);
                 return true;
         }
         return super.onOptionsItemSelected(item);

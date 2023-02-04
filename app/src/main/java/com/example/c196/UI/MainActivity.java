@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.c196.Database.Repository;
+import com.example.c196.Entity.Assessments;
 import com.example.c196.Entity.Courses;
 import com.example.c196.Entity.Terms;
 import com.example.c196.R;
@@ -23,20 +24,20 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, TermList.class);
         startActivity(intent);
         Repository repo = new Repository(getApplication());
-        Terms terms = new Terms(1, "term1", "1/2/2023", "1/4/2023");
-        repo.insert(terms);
+
     }
 
     public void CourseList(View view) {
         Intent intent = new Intent(MainActivity.this, CourseList.class);
         startActivity(intent);
         Repository repo = new Repository(getApplication());
-        Courses courses = new Courses(12, "Sample2", "Completed", "1/31/2023", "2/1/2023", 1, "Becky", "Becky@gmail.com", "909-538-2100", "meow meow");
-        repo.insert(courses);
     }
 
     public void AssessmentList(View view) {
         Intent intent = new Intent(MainActivity.this, AssessmentList.class);
         startActivity(intent);
+        Repository repo = new Repository(getApplication());
+        Assessments assessment = new Assessments(1, "Sample", "01/01/23", "01/01/23", "Objective", 13);
+        repo.insert(assessment);
     }
 }
