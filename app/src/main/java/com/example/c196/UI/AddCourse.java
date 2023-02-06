@@ -48,10 +48,12 @@ public class AddCourse extends AppCompatActivity {
     EditText note;
     Repository repository;
     String myFormat;
+    String selectedTerm;
     SimpleDateFormat sdf;
     Spinner termSpinner;
     int courseID;
     int termId;
+    String termName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,21 +61,21 @@ public class AddCourse extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         repository=new Repository(getApplication());
         courseID=getIntent().getIntExtra("id", -1);
+        termName = getIntent().getStringExtra("name");
         termSpinner = (Spinner) findViewById(R.id.termSpinner);
         List<Terms> terms = repository.getAllTerms();
-        List<Integer> termIDs = new ArrayList<>();
+        List<String> termNames = new ArrayList<>();
         for(Terms term : terms) {
-            termIDs.add(term.getTermId());
+            termNames.add(term.getTermName());
         }
         termId = getIntent().getIntExtra("termID", -1);
-        termSpinner.setSelection(termId);
-        ArrayAdapter<Integer> termArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, termIDs);
+        ArrayAdapter<String> termArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, termNames);
         termArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         termSpinner.setAdapter(termArrayAdapter);
         termSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                termId = Integer.parseInt(termSpinner.getSelectedItem().toString());
+                selectedTerm = termSpinner.getSelectedItem().toString();
             }
 
             @Override
@@ -81,6 +83,7 @@ public class AddCourse extends AppCompatActivity {
 
             }
         });
+        termSpinner.setSelection(getIndex(termSpinner, termName));
         editName=findViewById(R.id.courseNameEditText);
         editStart=findViewById(R.id.editCourseStart);
         editEnd=findViewById(R.id.editCourseEnd);
@@ -221,7 +224,22 @@ public class AddCourse extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    public int getIndex(Spinner spinner, String termName) {
+        for(int i = 0;i < spinner.getCount();i++) {
+            if(spinner.getItemAtPosition(i).toString().equals(termName))
+                return i;
+        }
+        return 0;
+    }
+    public int getTermId(String name) {
+        List<Terms> terms = repository.getAllTerms();
+        for(Terms term : terms) {
+            if(term.getTermName().equals(name)) {
+                return term.getTermId();
+            }
+        }
+         return -1;
+    }
     public void saveButton(View view) {
         Courses courses;
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.statusRadioGroup);
@@ -230,17 +248,19 @@ public class AddCourse extends AppCompatActivity {
         if(courseID == -1) {
             int newId = repository.getAllCourses().get(repository.getAllCourses().size() - 1).getCourseId() + 1;
             courses = new Courses(newId, editName.getText().toString(), button.getText().toString(),
-                    editStart.getText().toString(), editEnd.getText().toString(), termId, instructorName.getText().toString(),
+                    editStart.getText().toString(), editEnd.getText().toString(), getTermId(selectedTerm), instructorName.getText().toString(),
                     email.getText().toString(), phone.getText().toString(),note.getText().toString());
-            Toast.makeText(AddCourse.this, "Course saved", Toast.LENGTH_SHORT).show();
             repository.insert(courses);
+            Toast.makeText(AddCourse.this, "Course saved", Toast.LENGTH_SHORT).show();
+
         }
         else {
             courses = new Courses(courseID, editName.getText().toString(), button.getText().toString(),
-                    editStart.getText().toString(), editEnd.getText().toString(), termId, instructorName.getText().toString(),
+                    editStart.getText().toString(), editEnd.getText().toString(), getTermId(selectedTerm), instructorName.getText().toString(),
                     email.getText().toString(), phone.getText().toString(),note.getText().toString());
-            Toast.makeText(AddCourse.this, "Course updated", Toast.LENGTH_SHORT).show();
             repository.update(courses);
+            Toast.makeText(AddCourse.this, "Course updated", Toast.LENGTH_SHORT).show();
+
         }
     }
 }

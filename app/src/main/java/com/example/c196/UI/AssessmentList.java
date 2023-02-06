@@ -42,11 +42,11 @@ public class AssessmentList extends AppCompatActivity {
             case android.R.id.home:
                 this.finish();
                 return true;
-            /*case R.id.refreshCourseList:
-                courses=repo.getAllCourses();
+            case R.id.refreshCourseList:
+                assessments = repo.getAllAssessments();
                 recyclerView.setAdapter(adapter);
-                adapter.setCourses(courses);
-                return true;*/
+                adapter.setAssessments(assessments);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

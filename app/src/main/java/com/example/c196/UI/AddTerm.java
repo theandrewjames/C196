@@ -2,11 +2,13 @@ package com.example.c196.UI;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -15,13 +17,23 @@ import com.example.c196.Entity.Courses;
 import com.example.c196.Entity.Terms;
 import com.example.c196.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class AddTerm extends AppCompatActivity {
     EditText editName;
     EditText editStart;
     EditText editEnd;
+    DatePickerDialog.OnDateSetListener startDate;
+    DatePickerDialog.OnDateSetListener endDate;
+    final Calendar myCalendarStart = Calendar.getInstance();
+    String myFormat;
+    SimpleDateFormat sdf;
     String name;
     int termId;
     Repository repository;
@@ -36,10 +48,62 @@ public class AddTerm extends AppCompatActivity {
         editEnd=findViewById(R.id.editEndDate);
         termId=getIntent().getIntExtra("id", -1);
         editName.setText(getIntent().getStringExtra("title"));
+        String myFormat = "MM/dd/yy";
+        sdf = new SimpleDateFormat(myFormat, Locale.US);
         editStart.setText(getIntent().getStringExtra("start"));
         editEnd.setText(getIntent().getStringExtra("end"));
         repository=new Repository(getApplication());
+        editStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Date date;
+                String info = editStart.getText().toString();
+                if(info.equals(""))info= "02/10/23";
+                try {
+                    myCalendarStart.setTime(sdf.parse(info));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                new DatePickerDialog(AddTerm.this, startDate, myCalendarStart.get(Calendar.YEAR),
+                        myCalendarStart.get(Calendar.MONTH), myCalendarStart.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+        editEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Date date;
+                String info = editEnd.getText().toString();
+                if(info.equals(""))info= "02/10/23";
+                try {
+                    myCalendarStart.setTime(sdf.parse(info));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                new DatePickerDialog(AddTerm.this, endDate, myCalendarStart.get(Calendar.YEAR),
+                        myCalendarStart.get(Calendar.MONTH), myCalendarStart.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+        startDate=new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
+                myCalendarStart.set(Calendar.YEAR, year);
+                myCalendarStart.set(Calendar.MONTH, monthOfYear);
+                myCalendarStart.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabelStart();
+            }
+        };
+        endDate=new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
+                myCalendarStart.set(Calendar.YEAR, year);
+                myCalendarStart.set(Calendar.MONTH, monthOfYear);
+                myCalendarStart.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabelEnd();
+            }
+        };
     }
+    public void updateLabelStart() { editStart.setText(sdf.format(myCalendarStart.getTime()));}
+    public void updateLabelEnd() { editEnd.setText(sdf.format(myCalendarStart.getTime()));}
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.term_detail, menu);
         return true;

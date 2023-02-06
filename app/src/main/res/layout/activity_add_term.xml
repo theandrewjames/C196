@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".UI.AddTerm">
-    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +20,6 @@
                 android:text="Term Name:"
                 tools:layout_editor_absoluteX="37dp"
                 tools:layout_editor_absoluteY="82dp" />
-
             <EditText
                 android:id="@+id/editTermName"
                 android:layout_width="wrap_content"
@@ -29,7 +27,6 @@
                 android:hint="Hi"
                 tools:layout_editor_absoluteX="130dp"
                 tools:layout_editor_absoluteY="68dp" />
-
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -42,14 +39,12 @@
                 android:text="Start Date:"
                 tools:layout_editor_absoluteX="31dp"
                 tools:layout_editor_absoluteY="71dp" />
-
             <EditText
                 android:id="@+id/editStartDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="MM/DD/YYYY"
+                android:hint="MM/DD/YY"
                 android:inputType="date" />
-
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -62,19 +57,17 @@
                 android:text="End Date:"
                 tools:layout_editor_absoluteX="42dp"
                 tools:layout_editor_absoluteY="157dp" />
-
             <EditText
                 android:id="@+id/editEndDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="MM/DD/YYYY"
+                android:hint="MM/DD/YY"
                 android:inputType="date" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -82,19 +75,6 @@
                 android:clickable="true"
                 android:onClick="saveButton"/>
         </LinearLayout>
-
     </LinearLayout>
-
-
-
-
-
-
-    
-
-
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
