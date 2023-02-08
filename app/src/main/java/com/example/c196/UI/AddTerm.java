@@ -143,16 +143,33 @@ public class AddTerm extends AppCompatActivity {
     }
     public void saveButton(View view) {
         Terms terms;
+        List<Terms> allTerms = repository.getAllTerms();
+        String name = editName.getText().toString();
+        Boolean nameCheck = false;
         if(termId == -1) {
-            int newId = repository.getAllTerms().get(repository.getAllTerms().size() -1).getTermId() + 1;
-            terms = new Terms(newId, editName.getText().toString(), editStart.getText().toString(), editEnd.getText().toString());
-            Toast.makeText(AddTerm.this, "Term saved", Toast.LENGTH_SHORT).show();
-            repository.insert(terms);
+            for(Terms term : allTerms) {
+                if(term.getTermName().equals(name)) nameCheck = true;
+            }
+            if(nameCheck == true) Toast.makeText(AddTerm.this, "Term with this name already exists. Choose new name", Toast.LENGTH_SHORT).show();
+            else {
+                int newId = repository.getAllTerms().get(repository.getAllTerms().size() -1).getTermId() + 1;
+                terms = new Terms(newId, editName.getText().toString(), editStart.getText().toString(), editEnd.getText().toString());
+                Toast.makeText(AddTerm.this, "Term saved", Toast.LENGTH_SHORT).show();
+                repository.insert(terms);
+            }
+
         }
         else {
-            terms = new Terms(termId, editName.getText().toString(), editStart.getText().toString(), editEnd.getText().toString());
-            Toast.makeText(AddTerm.this, "Term updated", Toast.LENGTH_SHORT).show();
-            repository.update(terms);
+            for(Terms term : allTerms) {
+                if(term.getTermName().equals(name) && term.getTermId() != termId) nameCheck = true;
+            }
+            if(nameCheck == true) Toast.makeText(AddTerm.this, "Term with this name already exists. Choose new name", Toast.LENGTH_SHORT).show();
+            else {
+                terms = new Terms(termId, editName.getText().toString(), editStart.getText().toString(), editEnd.getText().toString());
+                Toast.makeText(AddTerm.this, "Term updated", Toast.LENGTH_SHORT).show();
+                repository.update(terms);
+            }
+
         }
     }
 }

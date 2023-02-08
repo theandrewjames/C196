@@ -233,18 +233,35 @@ public class AddAssessment extends AppCompatActivity {
     }
     public void saveButton(View view) {
         Assessments assessments;
+        List<Assessments> allAssessments = repository.getAllAssessments();
+        String assessmentName = editNAme.getText().toString();
+        Boolean nameCheck = false;
         if(assessmentId == -1) {
-          int newId = repository.getAllAssessments().get(repository.getAllAssessments().size() - 1).getAssessmentId() + 1;
-          assessments = new Assessments(newId, editNAme.getText().toString(), editStart.getText().toString(),
-                  editEnd.getText().toString(), status, getCourseId(name));
-          repository.insert(assessments);
-          Toast.makeText(AddAssessment.this, "Assessment saved", Toast.LENGTH_SHORT).show();
+            for(Assessments assessment : allAssessments) {
+                if(assessment.getTitle().equals(assessmentName)) nameCheck = true;
+            }
+            if(nameCheck == true) Toast.makeText(AddAssessment.this, "Assessment with this name already exists. Choose new name", Toast.LENGTH_SHORT).show();
+            else {
+                int newId = repository.getAllAssessments().get(repository.getAllAssessments().size() - 1).getAssessmentId() + 1;
+                assessments = new Assessments(newId, editNAme.getText().toString(), editStart.getText().toString(),
+                        editEnd.getText().toString(), status, getCourseId(name));
+                repository.insert(assessments);
+                Toast.makeText(AddAssessment.this, "Assessment saved", Toast.LENGTH_SHORT).show();
+            }
+
         }
         else {
-            assessments = new Assessments(assessmentId, editNAme.getText().toString(), editStart.getText().toString(),
-                    editEnd.getText().toString(), status, getCourseId(name));
-            repository.update(assessments);
-            Toast.makeText(AddAssessment.this, "Assessment updated", Toast.LENGTH_SHORT).show();
+            for(Assessments assessment : allAssessments) {
+                if(assessment.getTitle().equals(name) && assessment.getAssessmentId() != assessmentId) nameCheck = true;
+            }
+            if(nameCheck == true) Toast.makeText(AddAssessment.this, "Assessment with this name already exists. Choose new name", Toast.LENGTH_SHORT).show();
+            else {
+                assessments = new Assessments(assessmentId, editNAme.getText().toString(), editStart.getText().toString(),
+                        editEnd.getText().toString(), status, getCourseId(name));
+                repository.update(assessments);
+                Toast.makeText(AddAssessment.this, "Assessment updated", Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 }

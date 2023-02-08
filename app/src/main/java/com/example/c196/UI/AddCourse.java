@@ -170,7 +170,7 @@ public class AddCourse extends AppCompatActivity {
             case R.id.share:
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT,  getIntent().getStringExtra("note"));
+                sendIntent.putExtra(Intent.EXTRA_TEXT,  note.getText().toString());
                 sendIntent.putExtra(Intent.EXTRA_TITLE, "message title");
                 sendIntent.setType("text/plain");
                 Intent shareIntent=Intent.createChooser(sendIntent, null);
@@ -213,11 +213,13 @@ public class AddCourse extends AppCompatActivity {
                     List<Courses> courses = repository.getAllCourses();
                     List<Courses> courseToDelete = new ArrayList<>();
                     for (Courses courses1 : courses) {
-                        if (courses1.getCourseId() == courseID)
+                        if (courses1.getCourseId() == courseID) {
                             courseToDelete.add(courses1);
-                        repository.delete(courseToDelete.get(0));
-                        Toast.makeText(AddCourse.this, "Course deleted", Toast.LENGTH_SHORT).show();
-                        return true;
+                            repository.delete(courseToDelete.get(0));
+                            Toast.makeText(AddCourse.this, "Course deleted", Toast.LENGTH_SHORT).show();
+                            return true;
+                        }
+
                     }
                 }
         }
@@ -242,24 +244,41 @@ public class AddCourse extends AppCompatActivity {
     }
     public void saveButton(View view) {
         Courses courses;
+        List<Courses> allCourses = repository.getAllCourses();
+        String name = editName.getText().toString();
+        Boolean nameCheck = false;
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.statusRadioGroup);
         int selectedId = radioGroup.getCheckedRadioButtonId();
         RadioButton button = (RadioButton) findViewById(selectedId);
         if(courseID == -1) {
-            int newId = repository.getAllCourses().get(repository.getAllCourses().size() - 1).getCourseId() + 1;
-            courses = new Courses(newId, editName.getText().toString(), button.getText().toString(),
-                    editStart.getText().toString(), editEnd.getText().toString(), getTermId(selectedTerm), instructorName.getText().toString(),
-                    email.getText().toString(), phone.getText().toString(),note.getText().toString());
-            repository.insert(courses);
-            Toast.makeText(AddCourse.this, "Course saved", Toast.LENGTH_SHORT).show();
+            for(Courses course : allCourses) {
+                if(course.getCourseName().equals(name)) nameCheck = true;
+            }
+            if(nameCheck == true) Toast.makeText(AddCourse.this, "Course with this name already exists. Choose new name", Toast.LENGTH_SHORT).show();
+            else {
+                int newId = repository.getAllCourses().get(repository.getAllCourses().size() - 1).getCourseId() + 1;
+                courses = new Courses(newId, editName.getText().toString(), button.getText().toString(),
+                        editStart.getText().toString(), editEnd.getText().toString(), getTermId(selectedTerm), instructorName.getText().toString(),
+                        email.getText().toString(), phone.getText().toString(),note.getText().toString());
+                repository.insert(courses);
+                Toast.makeText(AddCourse.this, "Course saved", Toast.LENGTH_SHORT).show();
+            }
+
 
         }
         else {
-            courses = new Courses(courseID, editName.getText().toString(), button.getText().toString(),
-                    editStart.getText().toString(), editEnd.getText().toString(), getTermId(selectedTerm), instructorName.getText().toString(),
-                    email.getText().toString(), phone.getText().toString(),note.getText().toString());
-            repository.update(courses);
-            Toast.makeText(AddCourse.this, "Course updated", Toast.LENGTH_SHORT).show();
+            for(Courses course : allCourses) {
+                if(course.getCourseName().equals(name) && course.getCourseId() != courseID) nameCheck = true;
+            }
+            if(nameCheck == true) Toast.makeText(AddCourse.this, "Course with this name already exists. Choose new name", Toast.LENGTH_SHORT).show();
+            else {
+                courses = new Courses(courseID, editName.getText().toString(), button.getText().toString(),
+                        editStart.getText().toString(), editEnd.getText().toString(), getTermId(selectedTerm), instructorName.getText().toString(),
+                        email.getText().toString(), phone.getText().toString(),note.getText().toString());
+                repository.update(courses);
+                Toast.makeText(AddCourse.this, "Course updated", Toast.LENGTH_SHORT).show();
+            }
+
 
         }
     }

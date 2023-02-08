@@ -42,7 +42,7 @@ public class AssessmentList extends AppCompatActivity {
             case android.R.id.home:
                 this.finish();
                 return true;
-            case R.id.refreshCourseList:
+            case R.id.refreshAssessmentList:
                 assessments = repo.getAllAssessments();
                 recyclerView.setAdapter(adapter);
                 adapter.setAssessments(assessments);
