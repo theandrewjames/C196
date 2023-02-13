@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.c196.Database.Repository;
 import com.example.c196.Entity.Courses;
 import com.example.c196.Entity.Terms;
 import com.example.c196.R;
@@ -45,6 +46,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         }
     }
     private List<Courses> mCourses;
+    private List<Terms> mTerms;
     private final Context context;
     private final LayoutInflater mInflater;
     public CourseAdapter(Context context) {
@@ -63,7 +65,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         if (mCourses != null) {
             Courses current = mCourses.get(position);
             String title = current.getCourseName();
-            holder.courseItemView.setText(title + " Term:" + current.getTermId());
+            holder.courseItemView.setText(title + " Term ID:" + current.getTermId());
         } else {
             holder.courseItemView.setText("No available courses");
         }

@@ -54,16 +54,18 @@ public class AddCourse extends AppCompatActivity {
     int courseID;
     int termId;
     String termName;
+    List<Terms> terms;
+    List<Courses> allCourses;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_course);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         repository=new Repository(getApplication());
+        terms = repository.getAllTerms();
+        allCourses = repository.getAllCourses();
         courseID=getIntent().getIntExtra("id", -1);
-        termName = getIntent().getStringExtra("name");
         termSpinner = (Spinner) findViewById(R.id.termSpinner);
-        List<Terms> terms = repository.getAllTerms();
         List<String> termNames = new ArrayList<>();
         for(Terms term : terms) {
             termNames.add(term.getTermName());
@@ -83,7 +85,7 @@ public class AddCourse extends AppCompatActivity {
 
             }
         });
-        termSpinner.setSelection(getIndex(termSpinner, termName));
+        termSpinner.setSelection(getIndex(termSpinner, getTermName(termId)));
         editName=findViewById(R.id.courseNameEditText);
         editStart=findViewById(R.id.editCourseStart);
         editEnd=findViewById(R.id.editCourseEnd);
@@ -176,7 +178,7 @@ public class AddCourse extends AppCompatActivity {
                 Intent shareIntent=Intent.createChooser(sendIntent, null);
                 startActivity(shareIntent);
                 return true;
-            case R.id.notify:
+            case R.id.notifyCourseStart:
                 String dateFromScreen = editStart.getText().toString();
                 Date myDate = null;
                 try {
@@ -186,33 +188,35 @@ public class AddCourse extends AppCompatActivity {
                 }
                 Long trigger=myDate.getTime();
                 Intent intent = new Intent(AddCourse.this, MyReceiver.class);
-                intent.putExtra("key", "Start of course: " + getIntent().getStringExtra("name"));
+                intent.putExtra("key", "Start of course: " + editName.getText().toString());
                 PendingIntent sender = PendingIntent.getBroadcast(AddCourse.this, MainActivity.numAlert++,  intent, 0);
                 AlarmManager alarmManager=(AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
-                dateFromScreen = editEnd.getText().toString();
-                myDate = null;
+                Toast.makeText(AddCourse.this, "Start notification set", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.notifyCourseEnd:
+                String enddateFromScreen = editEnd.getText().toString();
+                Date myEndDate = null;
                 try {
-                    myDate = sdf.parse(dateFromScreen);
+                    myEndDate = sdf.parse(enddateFromScreen);
                 }catch (ParseException e) {
                     e.printStackTrace();
                 }
-                trigger=myDate.getTime();
-                intent = new Intent(AddCourse.this, MyReceiver.class);
-                intent.putExtra("key", "End of course: " + getIntent().getStringExtra("name"));
-                sender = PendingIntent.getBroadcast(AddCourse.this, MainActivity.numAlert++,  intent, 0);
-                alarmManager=(AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
-                Toast.makeText(AddCourse.this, "Start & end date notifications set", Toast.LENGTH_SHORT).show();
+                Long trigger1=myEndDate.getTime();
+                Intent intent1 = new Intent(AddCourse.this, MyReceiver.class);
+                intent1.putExtra("key", "End of course: " + editName.getText().toString());
+                PendingIntent sender1 = PendingIntent.getBroadcast(AddCourse.this, MainActivity.numAlert++,  intent1, 0);
+                AlarmManager alarmManager1=(AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                alarmManager1.set(AlarmManager.RTC_WAKEUP, trigger1, sender1);
+                Toast.makeText(AddCourse.this, "End date notification set", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.deleteCourse:
                 if(courseID == -1) {
                     Toast.makeText(AddCourse.this, "Cannot delete a non-saved course", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    List<Courses> courses = repository.getAllCourses();
                     List<Courses> courseToDelete = new ArrayList<>();
-                    for (Courses courses1 : courses) {
+                    for (Courses courses1 : allCourses) {
                         if (courses1.getCourseId() == courseID) {
                             courseToDelete.add(courses1);
                             repository.delete(courseToDelete.get(0));
@@ -233,8 +237,8 @@ public class AddCourse extends AppCompatActivity {
         }
         return 0;
     }
+
     public int getTermId(String name) {
-        List<Terms> terms = repository.getAllTerms();
         for(Terms term : terms) {
             if(term.getTermName().equals(name)) {
                 return term.getTermId();
@@ -242,19 +246,36 @@ public class AddCourse extends AppCompatActivity {
         }
          return -1;
     }
+    public String getTermName(int termID) {
+        for(Terms term: terms) {
+            if(term.getTermId() == termID){
+                return term.getTermName();
+            }
+        }
+        return null;
+    }
     public void saveButton(View view) {
         Courses courses;
-        List<Courses> allCourses = repository.getAllCourses();
         String name = editName.getText().toString();
         Boolean nameCheck = false;
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.statusRadioGroup);
         int selectedId = radioGroup.getCheckedRadioButtonId();
         RadioButton button = (RadioButton) findViewById(selectedId);
-        if(courseID == -1) {
+        if(selectedTerm == null) {
+            Toast.makeText(AddCourse.this, "Must add terms first", Toast.LENGTH_SHORT).show();
+        }
+        else if(courseID == -1) {
             for(Courses course : allCourses) {
                 if(course.getCourseName().equals(name)) nameCheck = true;
             }
             if(nameCheck == true) Toast.makeText(AddCourse.this, "Course with this name already exists. Choose new name", Toast.LENGTH_SHORT).show();
+            else if(allCourses.size() == 0) {
+                courses = new Courses(1, editName.getText().toString(), button.getText().toString(),
+                        editStart.getText().toString(), editEnd.getText().toString(), getTermId(selectedTerm), instructorName.getText().toString(),
+                        email.getText().toString(), phone.getText().toString(),note.getText().toString());
+                repository.insert(courses);
+                Toast.makeText(AddCourse.this, "Course saved", Toast.LENGTH_SHORT).show();
+            }
             else {
                 int newId = repository.getAllCourses().get(repository.getAllCourses().size() - 1).getCourseId() + 1;
                 courses = new Courses(newId, editName.getText().toString(), button.getText().toString(),

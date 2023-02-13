@@ -5,9 +5,12 @@
     <item android:title="Share Note"
         android:orderInCategory="100"
         android:id="@+id/share"/>
-    <item android:title="Notify"
+    <item android:title="Notify start course"
         android:orderInCategory="100"
-        android:id="@+id/notify"/>
+        android:id="@+id/notifyCourseStart"/>
+    <item android:title="Notify end course"
+        android:orderInCategory="100"
+        android:id="@+id/notifyCourseEnd"/>
     <item android:id="@+id/deleteCourse"
         android:orderInCategory="101"
         android:title="Delete" />

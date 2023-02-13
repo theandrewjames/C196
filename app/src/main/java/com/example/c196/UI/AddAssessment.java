@@ -167,7 +167,7 @@ public class AddAssessment extends AppCompatActivity {
             case android.R.id.home:
                 this.finish();
                 return true;
-            case R.id.notifyAssessment:
+            case R.id.notifyAssessmentStart:
                 String dateFromScreen = editStart.getText().toString();
                 Date myDate = null;
                 try {
@@ -177,24 +177,27 @@ public class AddAssessment extends AppCompatActivity {
                 }
                 Long trigger=myDate.getTime();
                 Intent intent = new Intent(AddAssessment.this, MyReceiver.class);
-                intent.putExtra("key", "Start of Assessment: " + getIntent().getStringExtra("name"));
+                intent.putExtra("key", "Start of Assessment: " + editNAme.getText().toString());
                 PendingIntent sender = PendingIntent.getBroadcast(AddAssessment.this, MainActivity.numAlert++,  intent, 0);
                 AlarmManager alarmManager=(AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
-                dateFromScreen = editEnd.getText().toString();
-                myDate = null;
+                Toast.makeText(AddAssessment.this, "Start date notification set", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.notifyAssessmentEnd:
+                String enddateFromScreen = editEnd.getText().toString();
+                Date myDate1 = null;
                 try {
-                    myDate = sdf.parse(dateFromScreen);
+                    myDate1 = sdf.parse(enddateFromScreen);
                 }catch (ParseException e) {
                     e.printStackTrace();
                 }
-                trigger=myDate.getTime();
-                intent = new Intent(AddAssessment.this, MyReceiver.class);
-                intent.putExtra("key", "End of Assessment: " + getIntent().getStringExtra("name"));
-                sender = PendingIntent.getBroadcast(AddAssessment.this, MainActivity.numAlert++,  intent, 0);
-                alarmManager=(AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
-                Toast.makeText(AddAssessment.this, "Start & end date notifications set", Toast.LENGTH_SHORT).show();
+                Long trigger1=myDate1.getTime();
+                Intent intent1 = new Intent(AddAssessment.this, MyReceiver.class);
+                intent1.putExtra("key", "End of Assessment: " + editNAme.getText().toString());
+                PendingIntent sender1 = PendingIntent.getBroadcast(AddAssessment.this, MainActivity.numAlert++,  intent1, 0);
+                AlarmManager alarmManager1=(AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                alarmManager1.set(AlarmManager.RTC_WAKEUP, trigger1, sender1);
+                Toast.makeText(AddAssessment.this, "End date notification set", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.deleteAssessment:
                 if(assessmentId == -1) {
@@ -236,11 +239,20 @@ public class AddAssessment extends AppCompatActivity {
         List<Assessments> allAssessments = repository.getAllAssessments();
         String assessmentName = editNAme.getText().toString();
         Boolean nameCheck = false;
-        if(assessmentId == -1) {
+        if(name == null) {
+            Toast.makeText(AddAssessment.this, "Must add courses first", Toast.LENGTH_SHORT).show();
+        }
+        else if(assessmentId == -1) {
             for(Assessments assessment : allAssessments) {
                 if(assessment.getTitle().equals(assessmentName)) nameCheck = true;
             }
             if(nameCheck == true) Toast.makeText(AddAssessment.this, "Assessment with this name already exists. Choose new name", Toast.LENGTH_SHORT).show();
+            else if(allAssessments.size() == 0) {
+                assessments = new Assessments(1, editNAme.getText().toString(), editStart.getText().toString(),
+                        editEnd.getText().toString(), status, getCourseId(name));
+                repository.insert(assessments);
+                Toast.makeText(AddAssessment.this, "Assessment saved", Toast.LENGTH_SHORT).show();
+            }
             else {
                 int newId = repository.getAllAssessments().get(repository.getAllAssessments().size() - 1).getAssessmentId() + 1;
                 assessments = new Assessments(newId, editNAme.getText().toString(), editStart.getText().toString(),

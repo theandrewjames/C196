@@ -2,5 +2,9 @@
     <string name="app_name">C196</string>
     <string name="channel_name">mychannel</string>
     <string name="channel_description">myChannelDescription</string>
+    <string name="c196_app">C196 App</string>
+    <string name="terms">Terms</string>
+    <string name="courses">Courses</string>
+    <string name="assessments">Assessments</string>
 
 </resources>
